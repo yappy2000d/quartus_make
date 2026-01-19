@@ -42,7 +42,7 @@ sim:
 	@cp -f "$(SRC_DIR)"/* "$(SIM_DIR)/"
 	$(MAKE) -C "$(SIM_DIR)" -f "$(CURDIR)/Makefile" VLOG_ARGS="$(VLOG_ARGS)" PROJECT="$(PROJECT)" do_pre_sim
 
-post_sim: syn
+post_sim:
 	@mkdir -p "$(SIM_DIR)"
 	@cp -f "$(SRC_DIR)"/* "$(SIM_DIR)/"
 	$(MAKE) -C "$(SIM_DIR)" -f "$(CURDIR)/Makefile" VLOG_ARGS="$(VLOG_ARGS)" PROJECT="$(PROJECT)" do_post_sim
@@ -58,6 +58,7 @@ $(ASSIGNMENT_FILES):
 
 do_syn: $(ASSIGNMENT_FILES) $(SOURCE_FILES) $(CONSTRAINT_FILES)
 	quartus_sh --flow compile "$(PROJECT)"
+	quartus_eda "$(PROJECT)" --simulation --tool=modelsim --format=verilog
 
 ##################################################
 # Simulation step
@@ -73,8 +74,8 @@ do_post_sim: work/_info $(PROJECT)_v.sdo $(PROJECT).vo
 	 -sdftyp $(REGION)=$(PROJECT)_v.sdo -do "run -all; quit"
 
 $(PROJECT)_v.sdo $(PROJECT).vo:
-	@copy "../$(SYN_DIR)/simulation/modelsim/$(PROJECT)_v.sdo" .
-	@copy "../$(SYN_DIR)/simulation/modelsim/$(PROJECT).vo" .
+	@cp "../$(SYN_DIR)/simulation/modelsim/$(PROJECT)_v.sdo" .
+	@cp "../$(SYN_DIR)/simulation/modelsim/$(PROJECT).vo" .
 
 ##################################################
 # Phony targets
